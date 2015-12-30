@@ -1,2 +1,8 @@
 ---
-# defaults file for correcthorse.named
+named_port: 53
+named_open_port: false
+named_listen_ipv4:
+  - 127.0.0.1
+named_listen_ipv6:
+  - ::1
+named_recursion: false

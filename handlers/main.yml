@@ -1,2 +1,7 @@
 ---
-# handlers file for correcthorse.named
+- name: restart named
+  service: name=named state=restarted
+
+- name: restart named-chroot
+  service: name=named-chroot state=restarted
+

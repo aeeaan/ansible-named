@@ -1,2 +1,50 @@
 ---
-# tasks file for correcthorse.named
+- name: install base bind rpms
+  yum: name={{ item }} state=present
+  with_items:
+    - bind-libs
+    - bind
+    - bind-chroot
+    - bind-utils
+  tags:
+    - bind
+    - packages
+
+- name: configure bind
+  template: src=named.conf.j2 dest=/etc/named.conf owner=root group=named mode=0640
+  notify: restart named-chroot
+  tags:
+    - bind
+    - configuration
+
+- name: ensure named is disabled and stopped
+  service: name=named enabled=no state=stopped
+  tags:
+    - bind
+    - configuration
+    - services
+
+- name: ensure named-chroot is enabled and running
+  service: name=named-chroot enabled=yes state=started
+  tags:
+    - bind
+    - configuration
+    - services
+
+- name: configure firewalld for named tcp
+  firewalld: zone=public port="{{ named_port }}/tcp" permanent=true state=enabled
+  notify: reload firewall
+  when: named_open_port and ansible_distribution_major_version|int > 6
+  tags:
+    - bind
+    - firewall
+    - configuration
+
+- name: configure firewalld for named udp
+  firewalld: zone=public port="{{ named_port }}/udp" permanent=true state=enabled
+  notify: reload firewall
+  when: named_open_port and ansible_distribution_major_version|int > 6
+  tags:
+    - bind
+    - firewall
+    - configuration
