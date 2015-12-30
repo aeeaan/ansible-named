@@ -53,6 +53,16 @@ zone "." IN {
 	file "named.ca";
 };
 
+{% for zone in named_zones %}
+zone "{{ zone.name }}" {
+        type {{ zone.type }};
+{% if zone.type == 'slave' %}
+        file "slaves/{{ zone.name }}";
+        masters { {% for master in named_masters %}{{ master }}; {% endfor %} };
+{% endif %}
+};
+{% endfor %}
+
 include "/etc/named.rfc1912.zones";
 include "/etc/named.root.key";
 
