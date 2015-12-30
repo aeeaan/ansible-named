@@ -5,6 +5,8 @@ named_listen_ipv4:
   - 127.0.0.1
 named_listen_ipv6:
   - ::1
+named_allow_query:
+  - localhost
 named_recursion: false
 named_masters: []
 named_zones: []
